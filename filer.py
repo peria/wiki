@@ -36,16 +36,49 @@ def readTemplate(filename):
   if not os.path.exists(filename):
     logging.error("Template file %s cannot be read." % filename)
     return None
+
   template = []
   for line in open(filename):
     template.append(line)
   # Simplify |template|
+  return ''.join(template)
 
 
-def applyTemplate(template, input, output):
+def readContent(filename):
   """
-  Recursively apply a template to input files and writes to output files.
-  Returns False if something goes wrong.
+  Reads |filename| and returns a dict.
+  @param string filename : Filename to read
+  @return : Dictionary type which includes contents' information.
+  """
+  contents = []
+  for line in open(filename):
+    contents.append(line)
+
+  ret = {}
+  # Read |contents| and build up a dict.
+  return ret
+  
+
+def applyTemplate(template, src_filename, dst_filename):
+  """
+  Applies |template| to |src_filename| and writes to |dst_filename|.
+  @param string template : Template string to match
+  @param string src_filename : Filename of a source file.
+  @param string dst_filename : Filename of a destination file.
+  """
+  content_dict = readContent(src_filename)
+  content = template % content_dict
+
+  try:
+    f = open(dst_filename, 'w')
+    f.write(content)
+  else:
+    print 'Could not process %s.' % dst_filename
+
+
+def copyFiles(template, input, output):
+  """
+  Copies input files to output files.  Applies template if they are HTML files.
   """
 
   for (dirpath, dirnames, filenames) in os.walk(input):
@@ -61,8 +94,7 @@ def applyTemplate(template, input, output):
       if os.path.exists(dst) and os.path.getmtime(src) < os.path.getmtime(dst):
         continue
       # Check if |src| is a HTML file.  We don't need templates for other file types.
-      ApplyTemplateFile(template, src, dst)
-
+      applyTemplate(template, src, dst)
 
 
 def main():
@@ -74,7 +106,7 @@ def main():
   if not template:
     exit()
 
-  applyTemplate(template, input, output)
+  copyFiles(template, input, output)
 
 
 if __name__ == '__main__':
