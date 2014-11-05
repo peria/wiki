@@ -31,6 +31,7 @@ def getOption():
 
   return (option, arg)
 
+
 def readTemplate(filename):
   if not os.path.exists(filename):
     logging.error("Template file %s cannot be read." % filename)
