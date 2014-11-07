@@ -57,7 +57,8 @@ def readContent(filename):
     contents.append(line)
 
   # TODO: Read |contents| and build up a dict.
-  return ''.join(contents)
+  dict = {'contents': ''.join(contents)}
+  return dict
 
 
 def applyTemplate(template, src_filename, dst_filename):
