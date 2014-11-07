@@ -20,7 +20,7 @@ def getOption():
   parser.add_option('-v', '--verbose', action='store_true', dest='verbose',
                     default=False)
 
-  options, arg = parser.pase_args()
+  options, arg = parser.parse_args()
 
   if not options.input or not options.output or not options.template:
     parser.print_help()
@@ -29,7 +29,7 @@ def getOption():
   if options.verbose:
     logging.getLogger().setLevel(logging.INFO)
 
-  return (option, arg)
+  return (options, arg)
 
 
 def readTemplate(filename):
@@ -40,7 +40,9 @@ def readTemplate(filename):
   template = []
   for line in open(filename):
     template.append(line)
-  # Simplify |template|
+
+  # TODO: Simplify |template|
+
   return ''.join(template)
 
 
@@ -54,10 +56,9 @@ def readContent(filename):
   for line in open(filename):
     contents.append(line)
 
-  ret = {}
-  # Read |contents| and build up a dict.
-  return ret
-  
+  # TODO: Read |contents| and build up a dict.
+  return ''.join(contents)
+
 
 def applyTemplate(template, src_filename, dst_filename):
   """
@@ -72,7 +73,7 @@ def applyTemplate(template, src_filename, dst_filename):
   try:
     f = open(dst_filename, 'w')
     f.write(content)
-  else:
+  except:
     print 'Could not process %s.' % dst_filename
 
 
@@ -106,7 +107,7 @@ def main():
   if not template:
     exit()
 
-  copyFiles(template, input, output)
+  copyFiles(template, options.input, options.output)
 
 
 if __name__ == '__main__':
