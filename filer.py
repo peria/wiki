@@ -3,11 +3,17 @@
 import logging
 import optparse
 import os
+import re
 
 """
 filer command copies all files.
 A template conversion is applied to HTML files.
 """
+
+# Enumerate of mode
+TEXT = 'TEXT'  # means a plain text or html.
+CODE = 'CODE'  # needs to be monospace fonts without trimming.
+
 
 def getOption():
   parser = optparse.OptionParser()
@@ -43,7 +49,21 @@ def readTemplate(filename):
 
   # TODO: Simplify |template|
 
+
   return ''.join(template)
+
+
+def translate(line, mode):
+  """
+  Translate plain text to partially marked up language.
+  """
+  # Comment mode
+  if re.match("^!", line.lstrip()):
+    line = ""
+
+  # Update |dic| if needed.
+  dic = None
+  return (line, mode, dic)
 
 
 def readContent(filename):
@@ -52,8 +72,10 @@ def readContent(filename):
   @param string filename : Filename to read
   @return : Dictionary type which includes contents' information.
   """
+  mode = TEXT
   contents = []
   for line in open(filename):
+    line, mode, dic = translate(line, mode)
     contents.append(line)
 
   # TODO: Read |contents| and build up a dict.
