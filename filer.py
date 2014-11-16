@@ -58,7 +58,7 @@ def translate(line, mode):
   Translate plain text to partially marked up language.
   """
   # Comment mode
-  if re.match("^!", line.lstrip()):
+  if re.search("^!", line.lstrip()):
     line = ""
 
   # Update |dic| if needed.
@@ -91,11 +91,15 @@ def applyTemplate(template, src_filename, dst_filename):
   @param string dst_filename : Filename of a destination file.
   """
   content_dict = readContent(src_filename)
-  content = template % content_dict
+  if re.search('\.html?$', src_filename):
+    content = template % content_dict
+  else:
+    content = content_dict['contents'];
 
   try:
     f = open(dst_filename, 'w')
     f.write(content)
+    print 'Writing %s.' % dst_filename
   except:
     print 'Could not process %s.' % dst_filename
 
@@ -113,6 +117,9 @@ def copyFiles(template, input, output):
         os.makedirs(dst_dir)
 
     for filename in filenames:
+      if re.search("~$", filename):
+        continue
+
       src = os.path.join(dirpath, filename)
       dst = src.replace(input, output)
       if os.path.exists(dst) and os.path.getmtime(src) < os.path.getmtime(dst):
